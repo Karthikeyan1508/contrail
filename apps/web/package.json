@@ -1,0 +1,14 @@
+{
+  "name": "@contrail/web-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev apps/web",
+    "build": "next build apps/web",
+    "start": "next start apps/web",
+    "lint": "eslint apps/web",
+    "format": "prettier --write \"apps/web/**/*.{ts,tsx}\"",
+    "typecheck": "tsc --noEmit -p apps/web/tsconfig.json"
+  }
+}

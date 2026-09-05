@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "description": "Governed AI content supply chain for airline disruption communications",
-  "workspaces": ["apps/api", "apps/web"],
+  "workspaces": ["apps/api", "apps/web", "apps/web/apps/web"],
   "scripts": {
     "dev": "concurrently -n api,web -c cyan,magenta \"npm:dev:api\" \"npm:dev:web\"",
     "dev:api": "npm run dev --workspace apps/api",

@@ -13,7 +13,7 @@ const nextConfig = {
   // to apps/web, cannot resolve the hoisted `next` package, and every compile
   // of /page panics with "Next.js package not found" — which reaches the
   // browser as an endless reload loop rather than an error.
-  turbopack: { root: resolve(HERE, '../..') },
+  turbopack: { root: resolve(HERE, '../../../..') },
 
   // The frontend never talks to Amadeus or Contentstack directly. One boundary.
   async rewrites() {
