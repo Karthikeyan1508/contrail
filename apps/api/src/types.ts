@@ -4,7 +4,10 @@
 // ---------------------------------------------------------------------------
 
 export type FactSource =
+  // whichever source answered for flight data
+  | 'aviationstack'
   | 'amadeus'
+  | 'fixture'
   | 'policy-engine'
   | 'crm'
   | 'inventory'
@@ -18,7 +21,7 @@ export interface Fact {
   /** Locale-rendered string form actually substituted into copy. */
   display: string;
   source: FactSource;
-  /** Human-readable provenance, e.g. "Amadeus On-Demand Flight Status v2". */
+  /** Human-readable provenance, e.g. "AviationStack live — 6E860 BLR->DEL". */
   sourceDetail: string;
   retrievedAt: string;
   /** 0..1 */

@@ -142,9 +142,18 @@ export async function buildLedger(
     entitlementInputFor(persona, scenario, flight.blockTimeMinutes, flight.distanceKm, 0, depHour),
   );
 
-  const amadeusSrc: [FactSource, string] = ['amadeus', flight.sourceDetail];
+  // The badge in the provenance drawer names whichever provider actually
+  // answered, so a fact can never be attributed to a vendor we did not call.
+  const flightSrc: [FactSource, string] = [flight.provider, flight.sourceDetail];
   const crmSrc: [FactSource, string] = ['crm', 'Passenger Service System — PNR record'];
-  const invSrc: [FactSource, string] = ['inventory', 'Amadeus availability — re-accommodation inventory'];
+  // The cancellation is ours, not the provider's: AviationStack reports this
+  // flight as scheduled. Attributing it to them would be the one claim on
+  // screen a judge could disprove from their own phone.
+  const worldSrc: [FactSource, string] = [
+    'fixture',
+    'Demo world state — the disruption itself, not read from a schedule API',
+  ];
+  const invSrc: [FactSource, string] = ['inventory', 'Carrier re-accommodation inventory — demo world state, not schedule data'];
   const polSrc: [FactSource, string] = ['policy-engine', 'Contrail policy engine (deterministic)'];
 
   const opt1 = flight.rebookingOptions[0];
@@ -159,16 +168,16 @@ export async function buildLedger(
     fact('party.size_words', persona.partySize, copy.partyWords(persona.partySize), ...crmSrc),
     fact('loyalty.tier', persona.tier, copy.tier[persona.tier] ?? persona.tier, ...crmSrc),
 
-    fact('flight.number', flight.designator, flight.designator, ...amadeusSrc),
-    fact('flight.status', flight.status, flight.status.toLowerCase(), ...amadeusSrc),
-    fact('flight.date', flight.scheduledDepartureDate, dateFor(flight.departure.scheduledTime, locale), ...amadeusSrc),
-    fact('flight.departure_airport', flight.departure.iataCode, flight.departure.iataCode, ...amadeusSrc),
-    fact('flight.arrival_airport', flight.arrival.iataCode, flight.arrival.iataCode, ...amadeusSrc),
-    fact('flight.departure_city', flight.departure.city, flight.departure.city, ...amadeusSrc),
-    fact('flight.arrival_city', flight.arrival.city, flight.arrival.city, ...amadeusSrc),
-    fact('flight.departure_terminal', flight.departure.terminal, flight.departure.terminal, ...amadeusSrc),
-    fact('flight.aircraft', flight.aircraft, flight.aircraft, ...amadeusSrc),
-    fact('flight.scheduled_dep_time', flight.departure.scheduledTime, timeFor(flight.departure.scheduledTime, locale), ...amadeusSrc),
+    fact('flight.number', flight.designator, flight.designator, ...flightSrc),
+    fact('flight.status', flight.status, flight.status.toLowerCase(), ...worldSrc),
+    fact('flight.date', flight.scheduledDepartureDate, dateFor(flight.departure.scheduledTime, locale), ...flightSrc),
+    fact('flight.departure_airport', flight.departure.iataCode, flight.departure.iataCode, ...flightSrc),
+    fact('flight.arrival_airport', flight.arrival.iataCode, flight.arrival.iataCode, ...flightSrc),
+    fact('flight.departure_city', flight.departure.city, flight.departure.city, ...flightSrc),
+    fact('flight.arrival_city', flight.arrival.city, flight.arrival.city, ...flightSrc),
+    fact('flight.departure_terminal', flight.departure.terminal, flight.departure.terminal, ...flightSrc),
+    fact('flight.aircraft', flight.aircraft, flight.aircraft, ...flightSrc),
+    fact('flight.scheduled_dep_time', flight.departure.scheduledTime, timeFor(flight.departure.scheduledTime, locale), ...flightSrc),
 
     fact('rebooking.option_1.number', opt1?.designator ?? '', opt1?.designator ?? '—', ...invSrc, opt1 ? 1 : 0.2),
     fact('rebooking.option_1.dep_time', opt1?.departureTime ?? '', opt1 ? timeFor(opt1.departureTime, locale) : '—', ...invSrc, opt1 ? 1 : 0.2),
