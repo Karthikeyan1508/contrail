@@ -235,13 +235,41 @@ export function ProvenanceSheet({
               </Button>
             </TabsContent>
 
-            <TabsContent value="source" className="mt-4">
-              <p className="mb-2 text-xs text-muted-foreground">
-                The stored variant. Note that it contains no numbers — only slots.
-              </p>
-              <pre className="overflow-x-auto rounded-md border bg-muted/50 p-3 text-xs leading-relaxed whitespace-pre-wrap">
-                {p.variant.slottedBody}
-              </pre>
+            <TabsContent value="source" className="mt-4 space-y-4">
+              <div>
+                <p className="mb-2 text-xs text-muted-foreground">
+                  The stored variant. Note that it contains no numbers — only slots.
+                </p>
+                <pre className="overflow-x-auto rounded-md border bg-muted/50 p-3 text-xs leading-relaxed whitespace-pre-wrap">
+                  {p.variant.slottedBody}
+                </pre>
+              </div>
+
+              <div className="space-y-2 text-sm">
+                <p className="text-xs text-muted-foreground">
+                  Contentstack Personalize — the experience this traveller resolves to.
+                </p>
+                {p.personalize ? (
+                  <>
+                    <Row label="Experience" value={p.personalize.experienceName} />
+                    <Row label="Variant" value={p.personalize.variantName} />
+                    <Row label="Matched audience" value={p.personalize.matchedAudience} mono />
+                    <Row label="Personalize alias" value={p.personalize.alias} mono />
+                    <Row label="Variant group" value={p.personalize.variantGroupUid} mono />
+                    <p className="pt-1 text-xs text-muted-foreground">
+                      Resolved by {p.personalize.resolvedBy}.
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    This traveller matches no audience in the experience, so Personalize would
+                    serve the control. Contrail still has a governed variant for them, keyed by
+                    combination rather than audience — that is the difference between deciding
+                    which variant to show and knowing the variant is safe to show.
+                  </p>
+                )}
+                <Row label="Combination key" value={p.variant.alias} mono />
+              </div>
             </TabsContent>
           </Tabs>
         </ScrollArea>

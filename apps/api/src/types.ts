@@ -199,6 +199,8 @@ export interface Variant {
 
 export interface UsedFact extends Fact {}
 
+import type { PersonalizeResolution } from './integrations/personalize.js';
+
 export interface RenderProvenance {
   facts: UsedFact[];
   rule: {
@@ -218,6 +220,8 @@ export interface RenderProvenance {
     key: VariantKey;
     slottedBody: string;
   };
+  /** The Contentstack Personalize variant this traveller resolves to, if any. */
+  personalize: PersonalizeResolution | null;
   timings: { selectMs: number; hydrateMs: number; totalMs: number };
   fallbackUsed: boolean;
   /** Non-empty when a stored variant existed but its preconditions did not hold. */

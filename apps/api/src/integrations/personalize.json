@@ -1,0 +1,32 @@
+{
+  "projectUid": "6a9bc7963398b9cebe38664c",
+  "experienceUid": "6a9bcb2e44d005af0d728de8",
+  "experienceShortUid": "0",
+  "experienceName": "Cancellation — app",
+  "variantGroupUid": "csdb8859d36e5bdf79",
+  "contentType": "disruption_message",
+  "scope": { "scenario": "cancellation", "channel": "app" },
+  "variants": [
+    {
+      "shortUid": "0",
+      "uid": "csb8db9d7e4e5b1edd",
+      "name": "High Value Traveller",
+      "audience": "high_value_travellers",
+      "alias": "cs_personalize_0_0"
+    },
+    {
+      "shortUid": "1",
+      "uid": "cs71b931a397feda40",
+      "name": "Group Traveller",
+      "audience": "group_travellers",
+      "alias": "cs_personalize_0_1"
+    },
+    {
+      "shortUid": "2",
+      "uid": "cs21ab898e1d7f9891",
+      "name": "Assistance Required",
+      "audience": "assistance_required",
+      "alias": "cs_personalize_0_2"
+    }
+  ]
+}

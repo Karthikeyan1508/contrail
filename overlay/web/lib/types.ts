@@ -71,6 +71,19 @@ export interface RenderProvenance {
     key: VariantKey;
     slottedBody: string;
   };
+  personalize: {
+    projectUid: string;
+    experienceUid: string;
+    experienceShortUid: string;
+    experienceName: string;
+    variantGroupUid: string;
+    variantUid: string;
+    variantShortUid: string;
+    variantName: string;
+    alias: string;
+    matchedAudience: string;
+    resolvedBy: string;
+  } | null;
   timings: { selectMs: number; hydrateMs: number; totalMs: number };
   fallbackUsed: boolean;
   preconditionMismatch: string[];
