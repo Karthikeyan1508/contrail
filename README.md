@@ -88,7 +88,8 @@ contrail/
 │   │       ├── policy/         DGCA / EU261 rule sets, composition rules, engine
 │   │       ├── foundry/        Drafter, rogue generator, the five gates
 │   │       ├── runtime/        Hydration, assembly, provenance, coverage
-│   │       ├── integrations/   Amadeus, Contentstack, LLM — all with fallbacks
+│   │       ├── integrations/   Flight status (AviationStack / Amadeus),
+│   │       │                Contentstack, LLM — all with fallbacks
 │   │       └── store/          Variant repository (local + Contentstack)
 │   └── web/                    Created by setup. shadcn preset + Contrail source.
 ├── overlay/web/                The Contrail frontend source, copied into apps/web
@@ -120,7 +121,7 @@ message. Every fact carries `value`, `display`, `source`, `sourceDetail`,
 `retrievedAt`, `confidence` and, where relevant, a legal `citation`. That
 metadata is what makes the provenance drawer possible.
 
-Facts come from Amadeus (flight status, re-accommodation inventory), the policy
+Facts come from the flight provider (live schedule, terminal, gate), the policy
 engine (a computed entitlement), and the PNR (tier, party size, accessibility,
 onward connection). Display values are locale-rendered, so the *same* slot
 produces `18:40`, `₹10,000` and `7` correctly formatted for `en-IN`, `hi-IN` or
@@ -198,19 +199,37 @@ Everything is optional and degrades gracefully. The header badges show which mod
 each subsystem is in, so a judge asking "is this all mocked?" gets an answer on
 screen.
 
-### Amadeus
+### Flight status
+
+The flight source is pluggable. `FLIGHT_PROVIDER=auto` picks AviationStack if
+it is keyed, then Amadeus, then the offline fixture. Any failure falls back to
+the fixture and says so in the badge tooltip, so the demo cannot break on
+conference wifi.
 
 ```env
-AMADEUS_CLIENT_ID=...
-AMADEUS_CLIENT_SECRET=...
+FLIGHT_PROVIDER=auto
+AVIATIONSTACK_ACCESS_KEY=...
 DEMO_CARRIER_CODE=6E
 DEMO_FLIGHT_NUMBER=860
 DEMO_FLIGHT_DATE=2026-09-05
 ```
 
-Uses On-Demand Flight Status (`GET /v2/schedule/flights`) against the test
-environment. Any failure falls back to the cached fixture and says so in the
-badge tooltip — the demo cannot break on conference wifi.
+**AviationStack** — `GET /v1/flights?flight_iata=6E860`. Two things the adapter
+handles: a search by flight number returns every marketing carrier on the metal,
+so the operating record is the one whose airline matches and whose
+`flight.codeshared` is null; and times come back as local wall-clock stamped
+`+00:00`, with the true zone in `departure.timezone`, so the offset is
+recomputed. The free plan rejects `flight_date`, so the query is for the current
+day. Live schedule, terminal and gate are merged in — **the cancellation and the
+re-accommodation inventory are never overwritten**, because no public schedule
+API carries them and the disruption is world state the demo owns. That guarantee
+is structural: `FlightPatch` has no `status` or `rebookingOptions` field.
+
+**Amadeus** — Amadeus decommissioned the self-service portal on 17 July 2026 and
+deactivated its keys, so `test.api.amadeus.com` no longer resolves. The adapter
+is kept because the host is one environment variable: point `AMADEUS_HOST` at an
+Enterprise endpoint, supply `AMADEUS_CLIENT_ID` and `AMADEUS_CLIENT_SECRET`, and
+that path returns without touching anything else.
 
 ### Contentstack
 
@@ -291,9 +310,10 @@ npm run dev:web      # web only, on :3000
 - **Verify the DGCA figures** in `apps/api/src/policy/dgca.rules.json` against the
   current CAR before quoting them on stage. They are encoded as data precisely so
   they are easy to correct.
-- **Check the live Amadeus catalogue** — the older ML prediction endpoints have
-  moved around. The risk signal is deliberately pluggable, so nothing breaks if
-  one is unavailable.
+- **The Amadeus self-service catalogue is gone** — the portal was decommissioned
+  on 17 July 2026, along with the ML prediction endpoints that had already been
+  withdrawn. Flight status now comes from AviationStack, and the risk signal is a
+  deterministic rule, so nothing depends on an endpoint that no longer exists.
 - The business case is arithmetic, not a borrowed statistic: 40 scenarios × 12
   locales × 6 segments × 4 channels = 11,520 variants; at 20 minutes of human
   authoring and review each, that is roughly two person-years per refresh cycle.

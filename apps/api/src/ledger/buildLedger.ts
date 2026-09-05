@@ -8,7 +8,7 @@ import type {
   Scenario,
   TravellerContext,
 } from '../types.js';
-import { getFlightSnapshot, type FlightSnapshot } from '../integrations/amadeus.js';
+import { getFlightSnapshot, type FlightSnapshot } from '../integrations/flightStatus.js';
 import { entitlementInputFor, resolveEntitlement } from '../policy/engine.js';
 
 const TZ = 'Asia/Kolkata';

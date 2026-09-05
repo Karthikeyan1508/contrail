@@ -69,7 +69,7 @@ export default function CommandDeck() {
             </Badge>
             <Badge variant="destructive" className="font-mono">{flight.status}</Badge>
             <Badge variant={flight.live ? 'default' : 'secondary'} className="font-mono text-[10px]">
-              {flight.live ? 'AMADEUS LIVE' : 'AMADEUS FIXTURE'}
+              {flight.live ? `${flight.provider} live`.toUpperCase() : 'OFFLINE FIXTURE'}
             </Badge>
           </div>
         ) : null}

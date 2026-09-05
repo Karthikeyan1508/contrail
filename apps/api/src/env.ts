@@ -9,13 +9,23 @@ export const env = {
   port: Number(str('PORT', '4000')),
   webOrigin: str('WEB_ORIGIN', 'http://localhost:3000'),
 
+  /** The flight the demo resolves, and which source resolves it. */
+  flight: {
+    provider: str('FLIGHT_PROVIDER', 'auto') as 'auto' | 'aviationstack' | 'amadeus' | 'fixture',
+    carrierCode: str('DEMO_CARRIER_CODE', '6E'),
+    flightNumber: str('DEMO_FLIGHT_NUMBER', '860'),
+    flightDate: str('DEMO_FLIGHT_DATE', '2026-09-05'),
+  },
+
+  aviationstack: {
+    accessKey: str('AVIATIONSTACK_ACCESS_KEY'),
+    host: str('AVIATIONSTACK_HOST', 'https://api.aviationstack.com'),
+  },
+
   amadeus: {
     clientId: str('AMADEUS_CLIENT_ID'),
     clientSecret: str('AMADEUS_CLIENT_SECRET'),
     host: str('AMADEUS_HOST', 'https://test.api.amadeus.com'),
-    carrierCode: str('DEMO_CARRIER_CODE', '6E'),
-    flightNumber: str('DEMO_FLIGHT_NUMBER', '860'),
-    flightDate: str('DEMO_FLIGHT_DATE', '2026-09-05'),
   },
 
   contentstack: {
@@ -42,6 +52,8 @@ export const env = {
 export const amadeusConfigured = Boolean(
   env.amadeus.clientId && env.amadeus.clientSecret,
 );
+
+export const aviationstackConfigured = Boolean(env.aviationstack.accessKey);
 
 export const contentstackConfigured =
   env.contentstack.mode === 'live' &&

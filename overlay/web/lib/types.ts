@@ -110,7 +110,13 @@ export interface RenderResult {
   ungoverned: UngovernedInfo | null;
   guardrails: boolean;
   entitlement: Entitlement;
-  flight: { designator: string; live: boolean; sourceDetail: string; status: string };
+  flight: {
+    designator: string;
+    live: boolean;
+    provider: string;
+    sourceDetail: string;
+    status: string;
+  };
   context: {
     passengerId: string;
     name: string;

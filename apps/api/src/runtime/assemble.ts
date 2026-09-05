@@ -182,6 +182,7 @@ export async function assemble(
   const flightMeta = {
     designator: flight.designator,
     live: flight.live,
+    provider: flight.provider,
     sourceDetail: flight.sourceDetail,
     status: flight.status,
   };

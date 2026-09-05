@@ -8,8 +8,8 @@ import { runFoundry } from './foundry/run.js';
 import { getRepository, repositoryNote } from './store/index.js';
 import { GATE_CATALOGUE, COMPOSITION_RULES } from './foundry/gates/index.js';
 import { RULE_SETS } from './policy/engine.js';
-import { getFlightSnapshot } from './integrations/amadeus.js';
-import { amadeusConfigured, contentstackConfigured, env, llmConfigured } from './env.js';
+import { activeProvider, getFlightSnapshot } from './integrations/flightStatus.js';
+import { amadeusConfigured, aviationstackConfigured, contentstackConfigured, env, llmConfigured } from './env.js';
 import type { Scenario, VariantKey } from './types.js';
 
 export const router: Router = Router();
@@ -41,9 +41,12 @@ router.get(
       ok: true,
       time: new Date().toISOString(),
       subsystems: {
+        // Key stays `amadeus` for wire compatibility with the frontend; the
+        // provider that actually answered is named in `provider` and `detail`.
         amadeus: {
           mode: flight.live ? 'live' : 'fixture',
-          configured: amadeusConfigured,
+          provider: activeProvider(),
+          configured: amadeusConfigured || aviationstackConfigured,
           detail: flight.sourceDetail,
           flight: flight.designator,
           status: flight.status,
@@ -110,6 +113,7 @@ router.post(
         designator: flight.designator,
         status: flight.status,
         live: flight.live,
+        provider: flight.provider,
         sourceDetail: flight.sourceDetail,
         departure: flight.departure,
         arrival: flight.arrival,

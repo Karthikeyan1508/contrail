@@ -8,7 +8,7 @@ import { api } from '@/lib/api';
 import type { Health } from '@/lib/types';
 
 const LABEL: Record<string, string> = {
-  amadeus: 'Amadeus',
+  amadeus: 'Flight',   // the provider is named in the tooltip, not the badge
   contentstack: 'Content',
   llm: 'Drafter',
 };
