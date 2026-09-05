@@ -1,5 +1,6 @@
 import config from './personalize.json' with { type: 'json' };
 import type { Channel, Scenario } from '../types.js';
+import { resolveViaEdge, edgeEnabled, type EdgeResolution } from './personalizeEdge.js';
 
 /**
  * The real Contentstack Personalize experience behind this demo.
@@ -28,6 +29,8 @@ export interface PersonalizeResolution {
   /** Which of the traveller's audiences selected this variant. */
   matchedAudience: string;
   resolvedBy: string;
+  /** What Contentstack's own edge said, when it was asked. */
+  edge: EdgeResolution | null;
 }
 
 /**
@@ -58,6 +61,64 @@ export function resolvePersonalize(
     variantName: hit.name,
     alias: hit.alias,
     matchedAudience: hit.audience,
-    resolvedBy: 'audience match, computed locally — not a Personalize Edge manifest fetch',
+    resolvedBy: edgeEnabled()
+      ? 'local audience match, confirmed against the Personalize Edge manifest'
+      : 'local audience match (edge lookup disabled)',
+    edge: null,
   };
+}
+
+/**
+ * The local match, plus Contentstack's own answer for the same attributes.
+ *
+ * The edge call is deliberately not on the message path: the copy is already
+ * assembled from the combination key by the time this runs, so a slow or
+ * unreachable edge costs the traveller nothing.
+ */
+export function resolvePersonalizeVerified(
+  scenario: Scenario,
+  channel: Channel,
+  audiences: string[],
+  userUid: string,
+  attributes: Record<string, string | number | boolean>,
+): PersonalizeResolution | null {
+  const local = resolvePersonalize(scenario, channel, audiences);
+  if (scenario !== config.scope.scenario || channel !== config.scope.channel) return local;
+
+  const raw = resolveViaEdge(userUid, attributes, local?.alias ?? null);
+  if (!raw) return local;
+
+  // Agreement is derived here, not cached: the boot warm-up has no local match
+  // to compare against, so a cached verdict would be meaningless.
+  const expected = local?.alias ?? null;
+  const agrees = raw.alias === expected;
+  const edge = {
+    ...raw,
+    agrees,
+    detail: agrees
+      ? `Contentstack Personalize resolved the same variant from the same attributes (${raw.ms} ms, cached at boot).`
+      : `Contentstack Personalize resolved ${raw.alias ?? 'the control'}; our local match said ${expected ?? 'the control'}.`,
+  };
+
+  // Contentstack may resolve a variant where we matched none, so the receipt
+  // has to be able to report the edge even without a local hit.
+  if (!local) {
+    if (!edge.alias) return null;
+    const v = config.variants.find((x) => x.alias === edge.alias);
+    return {
+      projectUid: config.projectUid,
+      experienceUid: config.experienceUid,
+      experienceShortUid: config.experienceShortUid,
+      experienceName: config.experienceName,
+      variantGroupUid: config.variantGroupUid,
+      variantUid: v?.uid ?? '',
+      variantShortUid: edge.variantShortUid ?? '',
+      variantName: v?.name ?? 'unknown',
+      alias: edge.alias,
+      matchedAudience: v?.audience ?? '(resolved by Contentstack)',
+      resolvedBy: 'Personalize Edge manifest — no local audience matched',
+      edge,
+    };
+  }
+  return { ...local, edge };
 }

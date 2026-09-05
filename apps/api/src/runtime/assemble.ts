@@ -17,7 +17,7 @@ import { rogueFactualErrors, rogueOutput } from '../foundry/rogue.js';
 import { safeFallbackBody } from '../foundry/blocks.js';
 import { generateAndPublish } from '../foundry/run.js';
 import { variantAlias } from '../store/repository.js';
-import { resolvePersonalize } from '../integrations/personalize.js';
+import { resolvePersonalizeVerified } from '../integrations/personalize.js';
 
 export interface AssembleOptions {
   guardrails: boolean;
@@ -161,7 +161,13 @@ export async function assemble(
       key: variant.key,
       slottedBody: variant.slottedBody,
     },
-    personalize: resolvePersonalize(scenario, persona.channel, context.audiences),
+    personalize: resolvePersonalizeVerified(
+      scenario,
+      persona.channel,
+      context.audiences,
+      `contrail-${persona.id}`,
+      context.attributes,
+    ),
     timings: { selectMs, hydrateMs, totalMs: round(performance.now() - tStart) },
     fallbackUsed,
     preconditionMismatch,

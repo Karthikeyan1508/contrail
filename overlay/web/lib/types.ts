@@ -83,6 +83,13 @@ export interface RenderProvenance {
     alias: string;
     matchedAudience: string;
     resolvedBy: string;
+    edge: {
+      variantShortUid: string | null;
+      alias: string | null;
+      agrees: boolean;
+      ms: number;
+      detail: string;
+    } | null;
   } | null;
   timings: { selectMs: number; hydrateMs: number; totalMs: number };
   fallbackUsed: boolean;

@@ -17,6 +17,12 @@ export const env = {
     flightDate: str('DEMO_FLIGHT_DATE', '2026-09-05'),
   },
 
+  personalize: {
+    /** Ask Contentstack's edge to confirm the variant. Off falls back to the local match. */
+    edge: str('PERSONALIZE_EDGE', 'on') !== 'off',
+    edgeHost: str('PERSONALIZE_EDGE_HOST', 'https://personalize-edge.contentstack.com'),
+  },
+
   aviationstack: {
     accessKey: str('AVIATIONSTACK_ACCESS_KEY'),
     host: str('AVIATIONSTACK_HOST', 'https://api.aviationstack.com'),
