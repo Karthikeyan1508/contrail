@@ -171,7 +171,7 @@ Run against the deliberately ungoverned output, these fire **30 findings in abou
    Priya (platinum, terse, `₹10,000` DGCA), the Fernandes family (entitlement
    first, wheelchair re-confirmed, connection protected), Rahul (Hindi, plain
    language, step by step), Ms. Tanaka (Japanese, `€400` under EU261 — a
-   *different regime*). Let the judges read. Don't narrate.
+   *different regime*).
 
 2. **Provenance.** Open the drawer on any card: every fact and its source, the
    rule that computed the amount with its full derivation and citation, the model
@@ -182,9 +182,8 @@ Run against the deliberately ungoverned output, these fire **30 findings in abou
 3. **Guardrails off.** Flip the switch. Raw model output replaces every message:
    wrong amount, wrong regulatory instrument, a hotel voucher the fare doesn't
    permit, the wheelchair commitment silently dropped, and a claim form for a
-   payment that is automatic. Leave it on screen and stay quiet for three
-   seconds. Then flip it back and open **blocked** to see exactly which rules
-   fired.
+   payment that is automatic. Flipping it back reveals **blocked** — the
+   rejected candidate and the exact rule that fired.
 
 4. **The loop.** Switch the scenario to *Denied boarding* — no variant exists, so
    the safe fallback serves and a gap is logged. Go to **Coverage**, see the gap
@@ -196,8 +195,7 @@ Run against the deliberately ungoverned output, these fire **30 findings in abou
 ## Running with real credentials
 
 Everything is optional and degrades gracefully. The header badges show which mode
-each subsystem is in, so a judge asking "is this all mocked?" gets an answer on
-screen.
+each subsystem is in, so the answer to "is this mocked?" is on screen.
 
 ### Flight status
 
@@ -253,21 +251,32 @@ Fields: `title`, `combination_key` (unique), `scenario`, `segment`,
 `preconditions` (JSON), `provenance` (JSON).
 
 Writes go through the Content Management API and publish; reads go through the
-Content Delivery API. `variant_alias` follows the Personalize convention
-(`cs_personalize_<experience>_<variant>`) so the same entries slot into a
-Personalize experience with audiences mapped from `context.attributes`.
+Content Delivery API, cached in memory so selection never touches the network.
 
-### LLM
+Personalize is wired, not just mirrored. Each traveller's attributes are pushed
+to the Personalize Edge API and their manifest read back, so the variant
+Contentstack selects is compared against the local audience match. The
+provenance drawer shows both answers and whether they agree. The lookup is
+warmed at boot and cached, so it stays off the render path.
+
+### The drafter
 
 ```env
-LLM_PROVIDER=anthropic     # or openai
-ANTHROPIC_API_KEY=...
+LLM_PROVIDER=groq          # or anthropic, openai, none
+GROQ_API_KEY=...
+GROQ_MODEL=openai/gpt-oss-120b
 ```
 
-The drafter's system prompt forbids literals and constrains it to the ledger's
-slot allowlist. Output that fails a cheap shape check never enters the pipeline,
-and the deterministic composer takes over. **For a stage demo, leaving this off
-is the right call** — the output is then byte-identical every run.
+The system prompt forbids literals outright — no digit, date, currency or flight
+designator — and the ledger's slot allowlist is injected on every request, so the
+set of things the model is able to say is generated from the facts held rather
+than fixed in a prompt. Output failing a cheap shape check never enters the
+pipeline. What reaches the gates gets two attempts, each annotated with the rule
+it violated, then escalates to human review.
+
+In testing, `gpt-oss-120b` honoured the slot rule every time and was rejected by
+the brand gate for opening with a banned phrase. `LLM_PROVIDER=none` falls back
+to the deterministic composer, which produces byte-identical output every run.
 
 ---
 
@@ -287,8 +296,8 @@ is the right call** — the output is then byte-identical every run.
 | `DELETE` | `/api/variants` | Clear the store |
 | `GET` | `/api/policy` | Gate catalogue, composition rules, both regimes |
 
-The browser never calls Amadeus or Contentstack. Next rewrites `/api/*` to the
-API, so there is one boundary and no CORS.
+The browser never calls a provider directly. Next rewrites `/api/*` to the API,
+so there is one boundary and no CORS.
 
 ---
 
@@ -305,11 +314,20 @@ npm run dev:web      # web only, on :3000
 
 ---
 
-## Notes before you present
+## What is live, and what is not
 
-- **Verify the DGCA figures** in `apps/api/src/policy/dgca.rules.json` against the
-  current CAR before quoting them on stage. They are encoded as data precisely so
-  they are easy to correct.
+- **Three integrations are live**: AviationStack for flight status, Contentstack
+  for content and Personalize, and Groq for generation. Each degrades to a cached
+  fixture and reports the fallback on screen.
+- **The DGCA bands are verified** against CAR Section 3, Series M, Part IV,
+  Revision 4 (effective 15 February 2023). They are encoded as data, and the
+  citation and statutory basis render in the provenance drawer.
+- **The cancellation is world state, not schedule data.** AviationStack reports
+  this flight as scheduled; no public schedule API carries re-accommodation
+  inventory. `FlightPatch` has no `status` field, so a live call cannot overwrite
+  either.
+- **Deliberately not built**: authentication, real rebooking execution, message
+  delivery over push or SMS, A/B measurement, and multi-carrier tenancy.
 - **The Amadeus self-service catalogue is gone** — the portal was decommissioned
   on 17 July 2026, along with the ML prediction endpoints that had already been
   withdrawn. Flight status now comes from AviationStack, and the risk signal is a
