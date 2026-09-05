@@ -1,0 +1,50 @@
+{
+  "regime": "DGCA",
+  "instrument": "DGCA CAR Section 3, Series M, Part IV",
+  "citation": "DGCA Civil Aviation Requirement, Section 3 — Air Transport, Series M, Part IV, Revision 4 (effective 15 February 2023): Facilities to be provided to passengers by airlines due to denied boarding, cancellation of flights and delays in flights.",
+  "settlementDays": 7,
+  "amountBasis": "The CAR sets each amount as the lesser of the tier amount and the one-way basic fare plus airline fuel charge, so the tier amount acts as a cap.",
+  "cancellation": {
+    "noticeBands": [
+      {
+        "id": "DGCA-CXL-A",
+        "name": "Cancellation with two weeks or more notice",
+        "minNoticeMinutes": 20160,
+        "compensable": false,
+        "note": "Refund or alternate flight only. No cash compensation."
+      },
+      {
+        "id": "DGCA-CXL-B",
+        "name": "Cancellation with less than two weeks but more than 24 hours notice",
+        "minNoticeMinutes": 1440,
+        "compensable": true,
+        "note": "Compensation payable where no acceptable alternate flight is offered within the prescribed window."
+      },
+      {
+        "id": "DGCA-CXL-C",
+        "name": "Cancellation with less than 24 hours notice",
+        "minNoticeMinutes": 0,
+        "compensable": true,
+        "note": "Compensation payable in addition to a full refund or re-accommodation."
+      }
+    ],
+    "blockTimeTiers": [
+      { "id": "T1", "maxBlockMinutes": 60, "amount": 5000, "label": "block time up to 1 hour" },
+      { "id": "T2", "maxBlockMinutes": 120, "amount": 7500, "label": "block time of 1 to 2 hours" },
+      { "id": "T3", "maxBlockMinutes": null, "amount": 10000, "label": "block time over 2 hours" }
+    ]
+  },
+  "deniedBoarding": {
+    "tiers": [
+      { "id": "DB1", "withinHours": 1, "amount": 0, "label": "alternate flight within one hour" },
+      { "id": "DB2", "withinHours": 24, "amount": 10000, "label": "alternate flight within 24 hours" },
+      { "id": "DB3", "withinHours": null, "amount": 20000, "label": "alternate flight beyond 24 hours or declined" }
+    ]
+  },
+  "dutyOfCare": [
+    { "id": "DOC-1", "afterMinutes": 120, "provision": "Meals and refreshments" },
+    { "id": "DOC-2", "afterMinutes": 360, "provision": "Alternate flight within six hours, or a full refund" },
+    { "id": "DOC-3", "afterMinutes": 360, "nightOnly": true, "provision": "Hotel accommodation for flights scheduled between 20:00 and 03:00" },
+    { "id": "DOC-4", "afterMinutes": 1440, "provision": "Hotel accommodation with transfers" }
+  ]
+}

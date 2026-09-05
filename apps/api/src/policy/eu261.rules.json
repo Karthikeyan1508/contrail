@@ -1,0 +1,42 @@
+{
+  "regime": "EU261",
+  "instrument": "Regulation (EC) No 261/2004",
+  "citation": "Regulation (EC) No 261/2004 of the European Parliament and of the Council establishing common rules on compensation and assistance to passengers in the event of denied boarding and of cancellation or long delay of flights.",
+  "settlementDays": 14,
+  "compensationArticle": "Article 7(1)",
+  "cancellation": {
+    "noticeBands": [
+      {
+        "id": "EU-CXL-A",
+        "name": "Cancellation with at least 14 days notice",
+        "minNoticeMinutes": 20160,
+        "compensable": false,
+        "note": "Article 5(1)(c)(i) — no compensation due."
+      },
+      {
+        "id": "EU-CXL-B",
+        "name": "Cancellation between 7 and 14 days notice",
+        "minNoticeMinutes": 10080,
+        "compensable": true,
+        "note": "Article 5(1)(c)(ii) — compensation due unless re-routing within prescribed limits."
+      },
+      {
+        "id": "EU-CXL-C",
+        "name": "Cancellation with less than 7 days notice",
+        "minNoticeMinutes": 0,
+        "compensable": true,
+        "note": "Article 5(1)(c)(iii) — compensation due unless re-routing within prescribed limits."
+      }
+    ],
+    "distanceTiers": [
+      { "id": "D1", "maxDistanceKm": 1500, "amount": 250, "label": "flights of 1,500 km or less" },
+      { "id": "D2", "maxDistanceKm": 3500, "amount": 400, "label": "intra-EU flights over 1,500 km and all other flights between 1,500 and 3,500 km" },
+      { "id": "D3", "maxDistanceKm": null, "amount": 600, "label": "all other flights over 3,500 km" }
+    ]
+  },
+  "dutyOfCare": [
+    { "id": "EU-DOC-1", "afterMinutes": 120, "provision": "Meals and refreshments proportionate to waiting time" },
+    { "id": "EU-DOC-2", "afterMinutes": 120, "provision": "Two telephone calls or messages free of charge" },
+    { "id": "EU-DOC-3", "afterMinutes": 300, "provision": "Right to reimbursement and a return flight where the journey no longer serves a purpose" }
+  ]
+}

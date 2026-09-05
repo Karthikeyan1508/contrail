@@ -1,0 +1,41 @@
+{
+  "source": "fixture",
+  "sourceDetail": "Cached Amadeus On-Demand Flight Status response (offline fixture)",
+  "carrierCode": "6E",
+  "flightNumber": "860",
+  "designator": "6E-860",
+  "scheduledDepartureDate": "2026-09-05",
+  "departure": {
+    "iataCode": "BLR",
+    "city": "Bengaluru",
+    "terminal": "1",
+    "scheduledTime": "2026-09-05T15:45:00+05:30"
+  },
+  "arrival": {
+    "iataCode": "DEL",
+    "city": "Delhi",
+    "terminal": "3",
+    "scheduledTime": "2026-09-05T18:35:00+05:30"
+  },
+  "aircraft": "A320neo",
+  "blockTimeMinutes": 170,
+  "status": "CANCELLED",
+  "statusReason": "Operational",
+  "rebookingOptions": [
+    {
+      "designator": "6E-6039",
+      "departureTime": "2026-09-05T17:00:00+05:30",
+      "arrivalTime": "2026-09-05T19:50:00+05:30",
+      "seatsAvailable": 34,
+      "cabin": "ECONOMY"
+    },
+    {
+      "designator": "6E-6034",
+      "departureTime": "2026-09-05T18:15:00+05:30",
+      "arrivalTime": "2026-09-05T21:05:00+05:30",
+      "seatsAvailable": 9,
+      "cabin": "ECONOMY"
+    }
+  ],
+  "scheduleNote": "6E-860, 6E-6039 and 6E-6034 are real IndiGo BLR-DEL services operating on 2026-09-05. Times are their published schedule; the cancellation and seat counts are the demo world state."
+}

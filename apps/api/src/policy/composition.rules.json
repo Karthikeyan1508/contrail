@@ -1,0 +1,117 @@
+{
+  "version": "2026.09.1",
+  "description": "Policy-as-code. These are the rules legal signs off ONCE. Gate 02 enforces them on every generated variant, forever.",
+  "rules": [
+    {
+      "id": "COMP-01",
+      "name": "Entitlement must be stated when one is due",
+      "rationale": "Withholding a legally owed entitlement from the notification is a regulatory exposure in itself.",
+      "when": {
+        "entitlementApplies": true
+      },
+      "requireSlots": [
+        "entitlement.amount",
+        "entitlement.rule_name"
+      ],
+      "severity": "block"
+    },
+    {
+      "id": "COMP-02",
+      "name": "No commercial offer before the entitlement is stated",
+      "rationale": "Leading with a voucher before disclosing a cash entitlement reads as an attempt to substitute one for the other.",
+      "when": {
+        "entitlementApplies": true
+      },
+      "orderingBefore": {
+        "slot": "entitlement.amount",
+        "mustNotContainTokens": [
+          "voucher",
+          "upgrade",
+          "discount",
+          "lounge",
+          "complimentary",
+          "free hotel",
+          "offer you",
+          "ラウンジ",
+          "無料",
+          "特典",
+          "मुफ्त",
+          "लाउंज"
+        ]
+      },
+      "severity": "block"
+    },
+    {
+      "id": "COMP-03",
+      "name": "Regime cited must match the passenger's applicable regime",
+      "rationale": "Citing the wrong instrument invalidates the disclosure and misstates the amount.",
+      "regimeConsistency": true,
+      "severity": "block"
+    },
+    {
+      "id": "ACC-01",
+      "name": "Booked assistance must be re-confirmed",
+      "rationale": "A re-accommodation silently drops special service requests unless they are explicitly carried over.",
+      "when": {
+        "accessibilityIncludes": "wheelchair"
+      },
+      "requireSlots": [
+        "assistance.status"
+      ],
+      "severity": "block"
+    },
+    {
+      "id": "CONN-01",
+      "name": "Onward connection status must be addressed",
+      "rationale": "For a connecting passenger the onward leg is the actual question being asked.",
+      "when": {
+        "hasOnwardConnection": true
+      },
+      "requireSlots": [
+        "connection.status"
+      ],
+      "severity": "block"
+    },
+    {
+      "id": "FARE-01",
+      "name": "Do not promise provisions the fare does not permit",
+      "rationale": "Duty-of-care provisions are conditional. Promising them unconditionally creates a commitment the operation cannot honour.",
+      "forbidTokens": [
+        "free hotel",
+        "complimentary hotel",
+        "hotel voucher",
+        "free upgrade",
+        "मुफ्त होटल",
+        "無料ホテル",
+        "ホテルクーポン",
+        "होटल वाउचर"
+      ],
+      "severity": "block"
+    },
+    {
+      "id": "CTA-01",
+      "name": "Every message ends in exactly one clear next action",
+      "rationale": "A disruption message without an action increases contact-centre volume rather than reducing it.",
+      "requireSlots": [
+        "cta.label"
+      ],
+      "severity": "block"
+    },
+    {
+      "id": "CLAIM-01",
+      "name": "Do not ask the passenger to claim an automatic payment",
+      "rationale": "Where settlement is automatic, instructing a claim suppresses uptake and is misleading.",
+      "forbidTokens": [
+        "submit a claim",
+        "claim form",
+        "fill in the claim",
+        "raise a claim",
+        "क्लेम फॉर्म",
+        "दावा फॉर्म",
+        "請求フォーム",
+        "請求手続"
+      ],
+      "severity": "block"
+    }
+  ]
+}
