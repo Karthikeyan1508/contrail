@@ -5,8 +5,18 @@
   "experienceName": "Cancellation — app",
   "variantGroupUid": "csdb8859d36e5bdf79",
   "contentType": "disruption_message",
-  "scope": { "scenario": "cancellation", "channel": "app" },
+  "scope": {
+    "scenario": "cancellation",
+    "channel": "app"
+  },
   "variants": [
+    {
+      "shortUid": "2",
+      "uid": "cs21ab898e1d7f9891",
+      "name": "Assistance Required",
+      "audience": "assistance_required",
+      "alias": "cs_personalize_0_2"
+    },
     {
       "shortUid": "0",
       "uid": "csb8db9d7e4e5b1edd",
@@ -20,13 +30,7 @@
       "name": "Group Traveller",
       "audience": "group_travellers",
       "alias": "cs_personalize_0_1"
-    },
-    {
-      "shortUid": "2",
-      "uid": "cs21ab898e1d7f9891",
-      "name": "Assistance Required",
-      "audience": "assistance_required",
-      "alias": "cs_personalize_0_2"
     }
-  ]
+  ],
+  "priorityNote": "Variant order mirrors the experience's Configuration tab (2, 0, 1). Personalize takes the first matching variant, so a traveller in several audiences resolves the way the experience is ordered, not by short uid."
 }
