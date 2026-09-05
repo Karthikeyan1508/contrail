@@ -42,6 +42,39 @@ export async function complete(system: string, user: string): Promise<LlmResult 
       return { text: text.trim(), provider: 'anthropic', model: env.llm.anthropicModel, deterministic: false };
     }
 
+    // Groq speaks the OpenAI chat-completions shape, so this branch differs
+    // only in host, key and model. Kept separate rather than folded into the
+    // OpenAI one so the provenance record names the provider that actually
+    // wrote the copy.
+    if (env.llm.provider === 'groq') {
+      const res = await withTimeout(
+        fetch(`${env.llm.groqHost}/openai/v1/chat/completions`, {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            authorization: `Bearer ${env.llm.groqKey}`,
+          },
+          body: JSON.stringify({
+            model: env.llm.groqModel,
+            temperature: 0.4,
+            max_tokens: 900,
+            messages: [
+              { role: 'system', content: system },
+              { role: 'user', content: user },
+            ],
+          }),
+        }),
+      );
+      if (!res.ok) throw new Error(`groq ${res.status}`);
+      const json = (await res.json()) as { choices: Array<{ message: { content: string } }> };
+      return {
+        text: (json.choices[0]?.message.content ?? '').trim(),
+        provider: 'groq',
+        model: env.llm.groqModel,
+        deterministic: false,
+      };
+    }
+
     if (env.llm.provider === 'openai') {
       const res = await withTimeout(
         fetch('https://api.openai.com/v1/chat/completions', {

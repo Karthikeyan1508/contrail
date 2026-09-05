@@ -47,11 +47,14 @@ export const env = {
   },
 
   llm: {
-    provider: str('LLM_PROVIDER', 'none') as 'none' | 'anthropic' | 'openai',
+    provider: str('LLM_PROVIDER', 'none') as 'none' | 'anthropic' | 'openai' | 'groq',
     anthropicKey: str('ANTHROPIC_API_KEY'),
     anthropicModel: str('ANTHROPIC_MODEL', 'claude-sonnet-4-20250514'),
     openaiKey: str('OPENAI_API_KEY'),
     openaiModel: str('OPENAI_MODEL', 'gpt-4o-mini'),
+    groqKey: str('GROQ_API_KEY'),
+    groqModel: str('GROQ_MODEL', 'openai/gpt-oss-120b'),
+    groqHost: str('GROQ_HOST', 'https://api.groq.com'),
   },
 };
 
@@ -67,4 +70,5 @@ export const contentstackConfigured =
 
 export const llmConfigured =
   (env.llm.provider === 'anthropic' && Boolean(env.llm.anthropicKey)) ||
-  (env.llm.provider === 'openai' && Boolean(env.llm.openaiKey));
+  (env.llm.provider === 'openai' && Boolean(env.llm.openaiKey)) ||
+  (env.llm.provider === 'groq' && Boolean(env.llm.groqKey));
