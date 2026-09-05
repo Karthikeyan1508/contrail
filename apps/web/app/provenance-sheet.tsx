@@ -256,6 +256,26 @@ export function ProvenanceSheet({
                     <Row label="Matched audience" value={p.personalize.matchedAudience} mono />
                     <Row label="Personalize alias" value={p.personalize.alias} mono />
                     <Row label="Variant group" value={p.personalize.variantGroupUid} mono />
+                    {p.personalize.edge ? (
+                      <div className="mt-1 rounded-md border p-3">
+                        <div className="flex items-baseline justify-between gap-3">
+                          <span className="text-xs text-muted-foreground">
+                            Contentstack Personalize edge
+                          </span>
+                          <span
+                            className={
+                              'font-mono text-[10px] tracking-wide uppercase ' +
+                              (p.personalize.edge.agrees ? 'text-primary' : 'text-destructive')
+                            }
+                          >
+                            {p.personalize.edge.agrees ? 'agrees' : 'differs'}
+                          </span>
+                        </div>
+                        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                          {p.personalize.edge.detail}
+                        </p>
+                      </div>
+                    ) : null}
                     <p className="pt-1 text-xs text-muted-foreground">
                       Resolved by {p.personalize.resolvedBy}.
                     </p>
